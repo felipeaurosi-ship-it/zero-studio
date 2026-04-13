@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zero.Studio — Painel Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f0f0d;--bg2:#161614;--bg3:#1e1e1a;--accent:#c8f000;--text:#f0ede6;--muted:#7a7870;--border:rgba(255,255,255,0.08);--danger:#e24b4a}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+
+/* HEADER */
+header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header-logo{font-weight:800;font-size:18px;letter-spacing:-0.02em}
+.header-logo span{color:var(--accent)}
+.header-status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.status-dot.ok{background:#4ade80;box-shadow:0 0 6px #4ade80}
+.status-dot.loading{background:var(--accent);animation:pulse 1s infinite}
+.status-dot.error{background:var(--danger)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.btn-publish{background:var(--accent);color:#000;font-weight:800;font-size:14px;padding:12px 28px;border:none;border-radius:6px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
+.btn-publish:hover{background:#d4ff00;transform:scale(1.02)}
+.btn-publish:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+
+/* LAYOUT */
+.container{max-width:960px;margin:0 auto;padding:40px 24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}}
+
+/* SECTIONS */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px}
+.section-title{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.section-title::before{content:'';width:16px;height:2px;background:var(--accent)}
+
+/* FIELDS */
+.field{margin-bottom:16px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
+.field input,.field textarea,.field select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:vertical}
+.field input:focus,.field textarea:focus{border-color:var(--accent)}
+.field textarea{min-height:80px}
+
+/* COLOR FIELD */
+.color-row{display:flex;align-items:center;gap:12px}
+.color-row input[type=color]{width:48px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--bg3);cursor:pointer}
+.color-row input[type=text]{flex:1}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
+.img-upload:hover{border-color:var(--accent)}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.img-upload-label{font-size:13px;color:var(--muted)}
+.img-upload-label strong{color:var(--accent)}
+.img-preview{max-height:80px;max-width:200px;margin:8px auto 0;display:none;border-radius:4px}
+
+/* STATS GRID */
+.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+
+/* LOG */
+.log{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:12px;color:var(--muted);font-family:monospace;max-height:120px;overflow-y:auto;margin-top:12px}
+.log .ok{color:#4ade80}
+.log .err{color:var(--danger)}
+.log .info{color:var(--accent)}
+
+/* PUBLISH CARD */
+.publish-card{background:linear-gradient(135deg,#1a1f0a,#0f0f0d);border:1px solid rgba(200,240,0,0.3);border-radius:12px;padding:28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.publish-info h2{font-size:20px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
+.publish-info p{font-size:13px;color:var(--muted)}
+.publish-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text);font-weight:600;font-size:13px;padding:10px 20px;border-radius:6px;cursor:pointer;transition:all .2s}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3)}
+
+  /* TOKEN SETUP */
+  #token-setup {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 24px;
+    padding: 40px;
+  }
+  .token-card {
+    background: var(--bg2);
+    border: 1px solid rgba(200,240,0,0.3);
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 480px;
+    width: 100%;
+    text-align: center;
+  }
+  .token-card h2 { font-size:22px; font-weight:800; margin-bottom:8px; }
+  .token-card p { color:var(--muted); font-size:14px; margin-bottom:24px; line-height:1.6; }
+  .token-input-wrap { position:relative; margin-bottom:8px; }
+  .token-input-wrap input {
+    width:100%;
+    background:var(--bg3);
+    border:1px solid var(--border);
+    border-radius:8px;
+    padding:14px 16px;
+    color:var(--text);
+    font-size:14px;
+    font-family:monospace;
+    outline:none;
+    transition:border-color .2s;
+  }
+  .token-input-wrap input:focus { border-color:var(--accent); }
+  .token-error { color:#e24b4a; font-size:12px; margin-bottom:16px; min-height:16px; }
+  .token-steps { text-align:left; background:var(--bg3); border-radius:8px; padding:16px; margin-bottom:24px; }
+  .token-steps p { font-size:12px; color:var(--muted); margin-bottom:6px; }
+  .token-steps a { color:var(--accent); }
+
+</style>
+</head>
+<body>
+
+
+<!-- TOKEN SETUP SCREEN -->
+<div id="token-setup">
+  <div class="token-card">
+    <div style="font-size:36px;margin-bottom:16px">🔑</div>
+    <h2>Configurar acesso</h2>
+    <p>Cole seu GitHub Token abaixo. Ele fica salvo <strong>só no seu navegador</strong> — nunca no código ou no GitHub.</p>
+    <div class="token-steps">
+      <p>1. Acesse <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></p>
+      <p>2. Gere um novo token (classic) com escopo <strong>repo</strong></p>
+      <p>3. Cole aqui abaixo e clique em Salvar</p>
+    </div>
+    <div class="token-input-wrap">
+      <input type="password" id="token-input" placeholder="ghp_..." autocomplete="off">
+    </div>
+    <div class="token-error" id="token-error"></div>
+    <button class="btn-publish" onclick="saveToken()" style="width:100%;justify-content:center">
+      🔓 Salvar e entrar
+    </button>
+  </div>
+</div>
+
+<div id="main-content">
+
+<header>
+  <div class="header-logo">ZERO<span>.</span>STUDIO <span style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">Painel Admin</span></div>
+  <div class="header-status">
+    <div class="status-dot" id="status-dot"></div>
+    <span id="status-text">Pronto para publicar</span>
+  </div>
+  <button class="btn-secondary" onclick="clearToken()" style="font-size:12px;padding:8px 14px">🔑 Trocar token</button>
+  <button class="btn-publish" id="btn-publish" onclick="publishSite()">
+    🚀 Publicar no site
+  </button>
+</header>
+
+<div class="container">
+
+  <!-- PUBLISH CARD -->
+  <div class="publish-card">
+    <div class="publish-info">
+      <h2>Publicar alterações</h2>
+      <p>Ao clicar em "Publicar no site", as alterações vão direto para o ar via GitHub + Netlify.</p>
+    </div>
+    <div class="publish-actions">
+      <button class="btn-secondary" onclick="previewSite()">👁 Pré-visualizar</button>
+      <a href="https://github.com/felipeaurosi-ship-it/zero-studio" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">GitHub →</a>
+    </div>
+  </div>
+  <div class="log" id="log"><span class="info">// Aguardando ações...</span></div>
+
+  <!-- IDENTIDADE -->
+  <div class="section">
+    <div class="section-title">Identidade</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Nome do Studio</label><input id="studioName" value="ZERO.STUDIO"></div>
+        <div class="field"><label>Cor de Destaque</label>
+          <div class="color-row">
+            <input type="color" id="accentColorPicker" value="#c8f000" oninput="document.getElementById('accentColor').value=this.value">
+            <input type="text" id="accentColor" value="#c8f000" oninput="document.getElementById('accentColorPicker').value=this.value">
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="field"><label>Logo (PNG transparente)</label>
+          <div class="img-upload" id="logo-upload-area">
+            <input type="file" accept="image/png,image/svg+xml,image/webp" id="logo-file" onchange="handleLogoUpload(event)">
+            <div class="img-upload-label">Arraste ou <strong>clique para selecionar</strong><br><span style="font-size:11px">PNG transparente recomendado</span></div>
+            <img class="img-preview" id="logo-preview">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="section">
+    <div class="section-title">Hero (topo)</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Tag / Localização</label><input id="heroTag" value="Studio Criativo — Maringá, BR"></div>
+        <div class="field"><label>Linha 1 (branca)</label><input id="heroLine1" value="Criamos"></div>
+        <div class="field"><label>Linha 2 (cinza)</label><input id="heroLine2" value="identidades"></div>
+        <div class="field"><label>Linha 3 (branca)</label><input id="heroLine3" value="que ficam."></div>
+      </div>
+      <div>
+        <div class="field"><label>Descrição</label><textarea id="heroDesc">Design gráfico, motion e branding para marcas que não querem passar despercebidas. Cada projeto é uma nova linguagem visual.</textarea></div>
+        <div class="field"><label>Botão CTA</label><input id="heroCta" value="VER PROJETOS →"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SERVIÇOS -->
+  <div class="section">
+    <div class="section-title">Serviços</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Serviço 1 — Nome</label><input id="s1Name" value="Design Gráfico"></div>
+        <div class="field"><label>Serviço 1 — Descrição</label><textarea id="s1Desc">Peças, campanhas e sistemas visuais construídos com intenção e precisão tipográficas.</textarea></div>
+      </div>
+      <div>
+        <div class="field"><label>Serviço 2 — Nome</label><input id="s2Name" value="Motion Design"></div>
+        <div class="field"><label>Serviço 2 — Descrição</label><textarea id="s2Desc">Animações e vídeos que dão vida às marcas — do storyboard ao render final.</textarea></div>
+      </div>
+    </div>
+    <div class="grid" style="margin-top:12px">
+      <div>
+        <div class="field"><label>Serviço 3 — Nome</label><input id="s3Name" value="Branding & Identidade"></div>
+        <div class="field"><label>Serviço 3 — Descrição</label><textarea id="s3Desc">Marcas com caráter — do naming e estratégia até o manual de identidade completo.</textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SOBRE -->
+  <div class="section">
+    <div class="section-title">Sobre o Studio</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Título</label><textarea id="aboutTitle">Design com propósito. Execução sem concessões.</textarea></div>
+        <div class="field"><label>Descrição</label><textarea id="aboutDesc">Somos um studio criativo independente especializado em construir marcas com personalidade. Acreditamos que bom design vai além do visual — é uma ferramenta estratégica que gera valor real.</textarea></div>
+        <div class="field"><label>Localização</label><input id="aboutLocation" value="📍 Localizado em Maringá, PR. Atendemos clientes em todo o Brasil e projetos internacionais sob consulta."></div>
+      </div>
+      <div>
+        <div class="stats-row">
+          <div class="field"><label>Stat 1 — Número</label><input id="stat1Num" value="47+"></div>
+          <div class="field"><label>Stat 1 — Label</label><input id="stat1Label" value="Projetos Entregues"></div>
+          <div class="field"><label>Stat 2 — Número</label><input id="stat2Num" value="5+"></div>
+          <div class="field"><label>Stat 2 — Label</label><input id="stat2Label" value="Anos de Studio"></div>
+          <div class="field"><label>Stat 3 — Número</label><input id="stat3Num" value="32"></div>
+          <div class="field"><label>Stat 3 — Label</label><input id="stat3Label" value="Clientes Ativos"></div>
+          <div class="field"><label>Stat 4 — Número</label><input id="stat4Num" value="3"></div>
+          <div class="field"><label>Stat 4 — Label</label><input id="stat4Label" value="Países Atendidos"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA FINAL -->
+  <div class="section">
+    <div class="section-title">CTA Final</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Linha 1</label><input id="ctaLine1" value="Pronto para criar"></div>
+        <div class="field"><label>Linha 2 (cinza)</label><input id="ctaLine2" value="algo diferente?"></div>
+      </div>
+      <div>
+        <div class="field"><label>Descrição</label><input id="ctaDesc" value="Vamos conversar sobre o seu próximo projeto."></div>
+        <div class="field"><label>Botão</label><input id="ctaBtn" value="INICIAR UM PROJETO →"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RODAPÉ -->
+  <div class="section">
+    <div class="section-title">Rodapé & Links</div>
+    <div class="grid">
+      <div>
+        <div class="field"><label>Texto copyright</label><input id="footerCopy" value="© 2026 Zero.Studio. Todos os direitos reservados."></div>
+      </div>
+      <div>
+        <div class="field"><label>Link Instagram</label><input id="linkInstagram" placeholder="https://instagram.com/..."></div>
+        <div class="field"><label>Link Behance</label><input id="linkBehance" placeholder="https://behance.net/..."></div>
+        <div class="field"><label>Link LinkedIn</label><input id="linkLinkedIn" placeholder="https://linkedin.com/..."></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+// Token stored only in browser localStorage — never in code
+let GITHUB_TOKEN = localStorage.getItem('zs_token') || '';
+
+// Show token setup if not configured
+function checkToken() {
+  if (!GITHUB_TOKEN) {
+    document.getElementById('token-setup').style.display = 'flex';
+    document.getElementById('main-content').style.display = 'none';
+  } else {
+    document.getElementById('token-setup').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+  }
+}
+
+function saveToken() {
+  const val = document.getElementById('token-input').value.trim();
+  if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
+    document.getElementById('token-error').textContent = 'Token inválido. Deve começar com ghp_';
+    return;
+  }
+  localStorage.setItem('zs_token', val);
+  GITHUB_TOKEN = val;
+  document.getElementById('token-error').textContent = '';
+  checkToken();
+}
+
+function clearToken() {
+  localStorage.removeItem('zs_token');
+  GITHUB_TOKEN = '';
+  checkToken();
+}
+const GITHUB_USER  = 'felipeaurosi-ship-it';
+const GITHUB_REPO  = 'zero-studio';
+const GITHUB_FILE  = 'index.html';
+const GITHUB_API   = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
+
+let logoBase64 = null;
+let currentSHA = null;
+
+function log(msg, type='info') {
+  const el = document.getElementById('log');
+  const line = document.createElement('div');
+  line.className = type;
+  line.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function setStatus(state, text) {
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot ' + state;
+  document.getElementById('status-text').textContent = text;
+}
+
+function handleLogoUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    logoBase64 = ev.target.result; // full data URI
+    const preview = document.getElementById('logo-preview');
+    preview.src = logoBase64;
+    preview.style.display = 'block';
+    log('Logo carregada: ' + file.name, 'ok');
+  };
+  reader.readAsDataURL(file);
+}
+
+function getValues() {
+  const g = id => document.getElementById(id)?.value || '';
+  return {
+    studioName: g('studioName'),
+    accentColor: g('accentColor'),
+    heroTag: g('heroTag'),
+    heroLine1: g('heroLine1'),
+    heroLine2: g('heroLine2'),
+    heroLine3: g('heroLine3'),
+    heroDesc: g('heroDesc'),
+    heroCta: g('heroCta'),
+    s1Name: g('s1Name'), s1Desc: g('s1Desc'),
+    s2Name: g('s2Name'), s2Desc: g('s2Desc'),
+    s3Name: g('s3Name'), s3Desc: g('s3Desc'),
+    aboutTitle: g('aboutTitle'),
+    aboutDesc: g('aboutDesc'),
+    aboutLocation: g('aboutLocation'),
+    stat1Num: g('stat1Num'), stat1Label: g('stat1Label'),
+    stat2Num: g('stat2Num'), stat2Label: g('stat2Label'),
+    stat3Num: g('stat3Num'), stat3Label: g('stat3Label'),
+    stat4Num: g('stat4Num'), stat4Label: g('stat4Label'),
+    ctaLine1: g('ctaLine1'), ctaLine2: g('ctaLine2'),
+    ctaDesc: g('ctaDesc'), ctaBtn: g('ctaBtn'),
+    footerCopy: g('footerCopy'),
+    linkInstagram: g('linkInstagram'),
+    linkBehance: g('linkBehance'),
+    linkLinkedIn: g('linkLinkedIn'),
+  };
+}
+
+async function fetchCurrentFile() {
+  const res = await fetch(GITHUB_API, {
+    headers: { Authorization: 'token ' + GITHUB_TOKEN, Accept: 'application/vnd.github.v3+json' }
+  });
+  if (!res.ok) throw new Error('Erro ao buscar arquivo: ' + res.status);
+  const data = await res.json();
+  currentSHA = data.sha;
+  return atob(data.content.replace(/\n/g, ''));
+}
+
+function applyValues(html, vals) {
+  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  // Helper to replace data-editable content
+  const replaceEditable = (html, key, val) => {
+    const re = new RegExp(`(data-editable="${key}">)[^<]*`, 'g');
+    return html.replace(re, `$1${esc(val)}`);
+  };
+
+  // Apply all text fields
+  const fields = [
+    ['nav-logo-name', vals.studioName.split('.')[0]],
+    ['nav-logo-suffix', vals.studioName.split('.')[1] || 'STUDIO'],
+    ['hero-tag', vals.heroTag],
+    ['hero-title-line1', vals.heroLine1],
+    ['hero-title-line2', vals.heroLine2],
+    ['hero-title-line3', vals.heroLine3],
+    ['hero-desc', vals.heroDesc],
+    ['hero-cta', vals.heroCta],
+    ['s1-name', vals.s1Name], ['s1-desc', vals.s1Desc],
+    ['s2-name', vals.s2Name], ['s2-desc', vals.s2Desc],
+    ['s3-name', vals.s3Name], ['s3-desc', vals.s3Desc],
+    ['about-title', vals.aboutTitle],
+    ['about-desc', vals.aboutDesc],
+    ['about-location', vals.aboutLocation],
+    ['stat1-num', vals.stat1Num], ['stat1-label', vals.stat1Label],
+    ['stat2-num', vals.stat2Num], ['stat2-label', vals.stat2Label],
+    ['stat3-num', vals.stat3Num], ['stat3-label', vals.stat3Label],
+    ['stat4-num', vals.stat4Num], ['stat4-label', vals.stat4Label],
+    ['cta-line1', vals.ctaLine1], ['cta-line2', vals.ctaLine2],
+    ['cta-desc', vals.ctaDesc], ['cta-btn', vals.ctaBtn],
+    ['footer-copy', vals.footerCopy],
+  ];
+
+  fields.forEach(([key, val]) => { html = replaceEditable(html, key, val); });
+
+  // Accent color
+  html = html.replace(/--accent:\s*#[a-fA-F0-9]{3,6}/g, `--accent: ${vals.accentColor}`);
+  html = html.replace(/--accent2:\s*#[a-fA-F0-9]{3,6}/g, `--accent2: ${vals.accentColor}`);
+
+  // Footer links
+  if (vals.linkInstagram) html = html.replace(/data-editable="footer-l1">[^<]*/g, `data-editable="footer-l1">Instagram`);
+  if (vals.linkBehance)   html = html.replace(/data-editable="footer-l2">[^<]*/g, `data-editable="footer-l2">Behance`);
+  if (vals.linkLinkedIn)  html = html.replace(/data-editable="footer-l3">[^<]*/g, `data-editable="footer-l3">LinkedIn`);
+
+  // Logo
+  if (logoBase64) {
+    html = html.replace(
+      /<img class="logo-img-preview" id="logo-img" src="[^"]*"/,
+      `<img class="logo-img-preview" id="logo-img" src="${logoBase64}" style="display:block;height:36px;width:auto;max-width:180px;" class="logo-img-preview active"`
+    );
+  }
+
+  return html;
+}
+
+async function publishSite() {
+  const btn = document.getElementById('btn-publish');
+  btn.disabled = true;
+  btn.textContent = '⏳ Publicando...';
+  setStatus('loading', 'Conectando ao GitHub...');
+  log('Iniciando publicação...', 'info');
+
+  try {
+    // 1. Fetch current file + SHA
+    log('Buscando versão atual do GitHub...', 'info');
+    let html = await fetchCurrentFile();
+    log('Arquivo obtido com sucesso ✓', 'ok');
+
+    // 2. Apply values
+    const vals = getValues();
+    html = applyValues(html, vals);
+    log('Alterações aplicadas ✓', 'ok');
+
+    // 3. Push to GitHub
+    setStatus('loading', 'Enviando para GitHub...');
+    log('Enviando para GitHub...', 'info');
+
+    const encoded = btoa(unescape(encodeURIComponent(html)));
+
+    const res = await fetch(GITHUB_API, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'token ' + GITHUB_TOKEN,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'Admin: atualização via painel ' + new Date().toLocaleString('pt-BR'),
+        content: encoded,
+        sha: currentSHA,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.message || 'Erro no GitHub: ' + res.status);
+    }
+
+    log('Push para GitHub realizado ✓', 'ok');
+    log('Netlify detectou alteração — publicando automaticamente...', 'info');
+    setStatus('ok', 'Publicado com sucesso! Aguarde ~30s no ar.');
+    log('✅ Site publicado! Acesse seu domínio Netlify em ~30 segundos.', 'ok');
+
+  } catch (err) {
+    log('❌ Erro: ' + err.message, 'err');
+    setStatus('error', 'Erro na publicação');
+    console.error(err);
+  }
+
+  btn.disabled = false;
+  btn.textContent = '🚀 Publicar no site';
+}
+
+function previewSite() {
+  // Open current GitHub Pages or Netlify URL
+  window.open('https://github.com/felipeaurosi-ship-it/zero-studio', '_blank');
+}
+
+// Init
+setStatus('ok', 'Pronto para publicar');
+log('Painel admin iniciado. Edite os campos e clique em Publicar.', 'ok');
+  checkToken();
+</script>
+
+</div><!-- /main-content -->
+</body>
+</html>
