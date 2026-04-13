@@ -8,123 +8,97 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--bg:#0f0f0d;--bg2:#161614;--bg3:#1e1e1a;--accent:#c8f000;--text:#f0ede6;--muted:#7a7870;--border:rgba(255,255,255,0.08);--danger:#e24b4a}
-body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;font-size:15px;line-height:1.6;min-height:100vh;}
+
+/* TOKEN SETUP */
+#token-setup{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:40px;}
+.token-card{background:var(--bg2);border:1px solid rgba(200,240,0,0.3);border-radius:16px;padding:40px;max-width:480px;width:100%;text-align:center;}
+.token-card h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+.token-card p{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.6;}
+.token-steps{text-align:left;background:var(--bg3);border-radius:8px;padding:16px;margin-bottom:24px;}
+.token-steps p{font-size:12px;color:var(--muted);margin-bottom:6px;}
+.token-steps a{color:var(--accent);}
+.token-input-wrap{margin-bottom:8px;}
+.token-input-wrap input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px 16px;color:var(--text);font-size:14px;font-family:monospace;outline:none;transition:border-color .2s;}
+.token-input-wrap input:focus{border-color:var(--accent);}
+.token-error{color:#e24b4a;font-size:12px;margin-bottom:16px;min-height:16px;}
 
 /* HEADER */
-header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
-.header-logo{font-weight:800;font-size:18px;letter-spacing:-0.02em}
-.header-logo span{color:var(--accent)}
-.header-status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
-.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.status-dot.ok{background:#4ade80;box-shadow:0 0 6px #4ade80}
-.status-dot.loading{background:var(--accent);animation:pulse 1s infinite}
-.status-dot.error{background:var(--danger)}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.btn-publish{background:var(--accent);color:#000;font-weight:800;font-size:14px;padding:12px 28px;border:none;border-radius:6px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px}
-.btn-publish:hover{background:#d4ff00;transform:scale(1.02)}
-.btn-publish:disabled{opacity:0.5;cursor:not-allowed;transform:none}
+header{background:#000;border-bottom:2px solid var(--accent);padding:14px 40px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.header-logo{font-weight:800;font-size:18px;letter-spacing:-0.02em;}
+.header-logo span{color:var(--accent);}
+.header-status{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:var(--muted);}
+.status-dot.ok{background:#4ade80;box-shadow:0 0 6px #4ade80;}
+.status-dot.loading{background:var(--accent);animation:pulse 1s infinite;}
+.status-dot.error{background:var(--danger);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.header-actions{display:flex;gap:10px;align-items:center;}
+.btn-publish{background:var(--accent);color:#000;font-weight:800;font-size:14px;padding:10px 24px;border:none;border-radius:6px;cursor:pointer;transition:all .2s;}
+.btn-publish:hover{background:#d4ff00;}
+.btn-publish:disabled{opacity:.5;cursor:not-allowed;}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted);padding:8px 16px;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;transition:all .2s;}
+.btn-secondary:hover{border-color:rgba(255,255,255,0.3);color:var(--text);}
 
 /* LAYOUT */
-.container{max-width:960px;margin:0 auto;padding:40px 24px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:700px){.grid{grid-template-columns:1fr}}
-
-/* SECTIONS */
-.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px}
-.section-title{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px}
-.section-title::before{content:'';width:16px;height:2px;background:var(--accent)}
-
-/* FIELDS */
-.field{margin-bottom:16px}
-.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px}
-.field input,.field textarea,.field select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:vertical}
-.field input:focus,.field textarea:focus{border-color:var(--accent)}
-.field textarea{min-height:80px}
-
-/* COLOR FIELD */
-.color-row{display:flex;align-items:center;gap:12px}
-.color-row input[type=color]{width:48px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--bg3);cursor:pointer}
-.color-row input[type=text]{flex:1}
-
-/* IMAGE UPLOAD */
-.img-upload{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative}
-.img-upload:hover{border-color:var(--accent)}
-.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer}
-.img-upload-label{font-size:13px;color:var(--muted)}
-.img-upload-label strong{color:var(--accent)}
-.img-preview{max-height:80px;max-width:200px;margin:8px auto 0;display:none;border-radius:4px}
-
-/* STATS GRID */
-.stats-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-
-/* LOG */
-.log{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:12px;color:var(--muted);font-family:monospace;max-height:120px;overflow-y:auto;margin-top:12px}
-.log .ok{color:#4ade80}
-.log .err{color:var(--danger)}
-.log .info{color:var(--accent)}
+.container{max-width:960px;margin:0 auto;padding:40px 24px;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+@media(max-width:700px){.grid{grid-template-columns:1fr;}}
 
 /* PUBLISH CARD */
-.publish-card{background:linear-gradient(135deg,#1a1f0a,#0f0f0d);border:1px solid rgba(200,240,0,0.3);border-radius:12px;padding:28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
-.publish-info h2{font-size:20px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px}
-.publish-info p{font-size:13px;color:var(--muted)}
-.publish-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--text);font-weight:600;font-size:13px;padding:10px 20px;border-radius:6px;cursor:pointer;transition:all .2s}
-.btn-secondary:hover{border-color:rgba(255,255,255,0.3)}
+.publish-card{background:linear-gradient(135deg,#1a1f0a,#0f0f0d);border:1px solid rgba(200,240,0,0.3);border-radius:12px;padding:28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;}
+.publish-info h2{font-size:20px;font-weight:800;letter-spacing:-0.02em;margin-bottom:4px;}
+.publish-info p{font-size:13px;color:var(--muted);}
 
-  /* TOKEN SETUP */
-  #token-setup {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: var(--bg);
-    z-index: 9999;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 24px;
-    padding: 40px;
-  }
-  .token-card {
-    background: var(--bg2);
-    border: 1px solid rgba(200,240,0,0.3);
-    border-radius: 16px;
-    padding: 40px;
-    max-width: 480px;
-    width: 100%;
-    text-align: center;
-  }
-  .token-card h2 { font-size:22px; font-weight:800; margin-bottom:8px; }
-  .token-card p { color:var(--muted); font-size:14px; margin-bottom:24px; line-height:1.6; }
-  .token-input-wrap { position:relative; margin-bottom:8px; }
-  .token-input-wrap input {
-    width:100%;
-    background:var(--bg3);
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:14px 16px;
-    color:var(--text);
-    font-size:14px;
-    font-family:monospace;
-    outline:none;
-    transition:border-color .2s;
-  }
-  .token-input-wrap input:focus { border-color:var(--accent); }
-  .token-error { color:#e24b4a; font-size:12px; margin-bottom:16px; min-height:16px; }
-  .token-steps { text-align:left; background:var(--bg3); border-radius:8px; padding:16px; margin-bottom:24px; }
-  .token-steps p { font-size:12px; color:var(--muted); margin-bottom:6px; }
-  .token-steps a { color:var(--accent); }
+/* LOG */
+.log{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-size:12px;color:var(--muted);font-family:monospace;max-height:100px;overflow-y:auto;margin-top:12px;}
+.log .ok{color:#4ade80;}
+.log .err{color:var(--danger);}
+.log .info{color:var(--accent);}
 
+/* SECTIONS */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:28px;margin-bottom:20px;}
+.section-title{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'';width:16px;height:2px;background:var(--accent);}
+
+/* FIELDS */
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.field input,.field textarea,.field select{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:10px 14px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;transition:border-color .2s;resize:vertical;}
+.field input:focus,.field textarea:focus{border-color:var(--accent);}
+.field textarea{min-height:80px;}
+.field small{display:block;font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5;}
+
+/* COLOR */
+.color-row{display:flex;align-items:center;gap:12px;}
+.color-row input[type=color]{width:48px;height:36px;border:1px solid var(--border);border-radius:6px;padding:2px;background:var(--bg3);cursor:pointer;}
+.color-row input[type=text]{flex:1;}
+
+/* IMAGE UPLOAD */
+.img-upload{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;}
+.img-upload:hover{border-color:var(--accent);}
+.img-upload input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.img-upload-label{font-size:13px;color:var(--muted);}
+.img-upload-label strong{color:var(--accent);}
+.img-preview{max-height:80px;max-width:200px;margin:8px auto 0;display:none;border-radius:4px;}
+
+/* RANGE */
+.range-row{display:flex;align-items:center;gap:12px;}
+.range-row input[type=range]{flex:1;}
+.range-val{font-size:13px;font-weight:600;min-width:48px;color:var(--accent);}
+
+/* CLIENTS GRID */
+.clients-upload-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 </style>
 </head>
 <body>
 
-
-<!-- TOKEN SETUP SCREEN -->
+<!-- TOKEN SETUP -->
 <div id="token-setup">
   <div class="token-card">
     <div style="font-size:36px;margin-bottom:16px">🔑</div>
     <h2>Configurar acesso</h2>
-    <p>Cole seu GitHub Token abaixo. Ele fica salvo <strong>só no seu navegador</strong> — nunca no código ou no GitHub.</p>
+    <p>Cole seu GitHub Token abaixo. Ele fica salvo <strong>so no seu navegador</strong> &mdash; nunca no codigo ou GitHub.</p>
     <div class="token-steps">
       <p>1. Acesse <a href="https://github.com/settings/tokens" target="_blank">github.com/settings/tokens</a></p>
       <p>2. Gere um novo token (classic) com escopo <strong>repo</strong></p>
@@ -134,9 +108,7 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
       <input type="password" id="token-input" placeholder="ghp_..." autocomplete="off">
     </div>
     <div class="token-error" id="token-error"></div>
-    <button class="btn-publish" onclick="saveToken()" style="width:100%;justify-content:center">
-      🔓 Salvar e entrar
-    </button>
+    <button class="btn-publish" onclick="saveToken()" style="width:100%;justify-content:center">🔓 Salvar e entrar</button>
   </div>
 </div>
 
@@ -146,28 +118,24 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
   <div class="header-logo">ZERO<span>.</span>STUDIO <span style="font-size:12px;font-weight:400;color:var(--muted);margin-left:8px">Painel Admin</span></div>
   <div class="header-status">
     <div class="status-dot" id="status-dot"></div>
-    <span id="status-text">Pronto para publicar</span>
+    <span id="status-text">Pronto</span>
   </div>
-  <button class="btn-secondary" onclick="clearToken()" style="font-size:12px;padding:8px 14px">🔑 Trocar token</button>
-  <button class="btn-publish" id="btn-publish" onclick="publishSite()">
-    🚀 Publicar no site
-  </button>
+  <div class="header-actions">
+    <button class="btn-secondary" onclick="clearToken()">🔑 Trocar token</button>
+    <button class="btn-secondary" onclick="window.open('https://cheerful-beijinho-12a259.netlify.app','_blank')">Ver site →</button>
+    <button class="btn-publish" id="btn-publish" onclick="publishSite()">🚀 Publicar no site</button>
+  </div>
 </header>
 
 <div class="container">
 
-  <!-- PUBLISH CARD -->
   <div class="publish-card">
     <div class="publish-info">
-      <h2>Publicar alterações</h2>
-      <p>Ao clicar em "Publicar no site", as alterações vão direto para o ar via GitHub + Netlify.</p>
-    </div>
-    <div class="publish-actions">
-      <button class="btn-secondary" onclick="previewSite()">👁 Pré-visualizar</button>
-      <a href="https://github.com/felipeaurosi-ship-it/zero-studio" target="_blank" class="btn-secondary" style="text-decoration:none;display:inline-flex;align-items:center;gap:6px">GitHub →</a>
+      <h2>Publicar alteracoes</h2>
+      <p>Edite os campos abaixo e clique em Publicar. O site atualiza em ~30 segundos.</p>
     </div>
   </div>
-  <div class="log" id="log"><span class="info">// Aguardando ações...</span></div>
+  <div class="log" id="log"><span class="info">// Aguardando acoes...</span></div>
 
   <!-- IDENTIDADE -->
   <div class="section">
@@ -177,18 +145,25 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
         <div class="field"><label>Nome do Studio</label><input id="studioName" value="ZERO.STUDIO"></div>
         <div class="field"><label>Cor de Destaque</label>
           <div class="color-row">
-            <input type="color" id="accentColorPicker" value="#c8f000" oninput="document.getElementById('accentColor').value=this.value">
-            <input type="text" id="accentColor" value="#c8f000" oninput="document.getElementById('accentColorPicker').value=this.value">
+            <input type="color" id="accentPicker" value="#c8f000" oninput="document.getElementById('accentColor').value=this.value">
+            <input type="text" id="accentColor" value="#c8f000" oninput="document.getElementById('accentPicker').value=this.value">
           </div>
         </div>
       </div>
       <div>
         <div class="field"><label>Logo (PNG transparente)</label>
-          <div class="img-upload" id="logo-upload-area">
+          <div class="img-upload">
             <input type="file" accept="image/png,image/svg+xml,image/webp" id="logo-file" onchange="handleLogoUpload(event)">
-            <div class="img-upload-label">Arraste ou <strong>clique para selecionar</strong><br><span style="font-size:11px">PNG transparente recomendado</span></div>
+            <div class="img-upload-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG transparente recomendado</span></div>
             <img class="img-preview" id="logo-preview">
           </div>
+        </div>
+        <div class="field"><label>Altura da Logo</label>
+          <div class="range-row">
+            <input type="range" min="20" max="60" value="36" id="logoHeight" oninput="document.getElementById('logoHeightVal').textContent=this.value+'px'">
+            <span class="range-val" id="logoHeightVal">36px</span>
+          </div>
+          <small>Ajuste o tamanho da logo no menu (20px a 60px)</small>
         </div>
       </div>
     </div>
@@ -199,35 +174,96 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
     <div class="section-title">Hero (topo)</div>
     <div class="grid">
       <div>
-        <div class="field"><label>Tag / Localização</label><input id="heroTag" value="Studio Criativo — Maringá, BR"></div>
+        <div class="field"><label>Tag / Localizacao</label><input id="heroTag" value="Studio Criativo &mdash; Maringa, BR"></div>
         <div class="field"><label>Linha 1 (branca)</label><input id="heroLine1" value="Criamos"></div>
         <div class="field"><label>Linha 2 (cinza)</label><input id="heroLine2" value="identidades"></div>
         <div class="field"><label>Linha 3 (branca)</label><input id="heroLine3" value="que ficam."></div>
       </div>
       <div>
-        <div class="field"><label>Descrição</label><textarea id="heroDesc">Design gráfico, motion e branding para marcas que não querem passar despercebidas. Cada projeto é uma nova linguagem visual.</textarea></div>
-        <div class="field"><label>Botão CTA</label><input id="heroCta" value="VER PROJETOS →"></div>
+        <div class="field"><label>Descricao</label><textarea id="heroDesc">Design grafico, motion e branding para marcas que nao querem passar despercebidas. Cada projeto e uma nova linguagem visual.</textarea></div>
+        <div class="field"><label>Texto do Botao</label><input id="heroCta" value="VER PROJETOS →"></div>
       </div>
     </div>
   </div>
 
-  <!-- SERVIÇOS -->
+  <!-- SERVICOS -->
   <div class="section">
-    <div class="section-title">Serviços</div>
+    <div class="section-title">Servicos</div>
     <div class="grid">
       <div>
-        <div class="field"><label>Serviço 1 — Nome</label><input id="s1Name" value="Design Gráfico"></div>
-        <div class="field"><label>Serviço 1 — Descrição</label><textarea id="s1Desc">Peças, campanhas e sistemas visuais construídos com intenção e precisão tipográficas.</textarea></div>
+        <div class="field"><label>Servico 1 — Nome</label><input id="s1Name" value="Design Grafico"></div>
+        <div class="field"><label>Servico 1 — Descricao</label><textarea id="s1Desc">Pecas, campanhas e sistemas visuais construidos com intencao e precisao tipograficas.</textarea></div>
       </div>
       <div>
-        <div class="field"><label>Serviço 2 — Nome</label><input id="s2Name" value="Motion Design"></div>
-        <div class="field"><label>Serviço 2 — Descrição</label><textarea id="s2Desc">Animações e vídeos que dão vida às marcas — do storyboard ao render final.</textarea></div>
+        <div class="field"><label>Servico 2 — Nome</label><input id="s2Name" value="Motion Design"></div>
+        <div class="field"><label>Servico 2 — Descricao</label><textarea id="s2Desc">Animacoes e videos que dao vida as marcas &mdash; do storyboard ao render final.</textarea></div>
       </div>
     </div>
     <div class="grid" style="margin-top:12px">
       <div>
-        <div class="field"><label>Serviço 3 — Nome</label><input id="s3Name" value="Branding & Identidade"></div>
-        <div class="field"><label>Serviço 3 — Descrição</label><textarea id="s3Desc">Marcas com caráter — do naming e estratégia até o manual de identidade completo.</textarea></div>
+        <div class="field"><label>Servico 3 — Nome</label><input id="s3Name" value="Branding &amp; Identidade"></div>
+        <div class="field"><label>Servico 3 — Descricao</label><textarea id="s3Desc">Marcas com carater &mdash; do naming e estrategia ate o manual de identidade completo.</textarea></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLIENTES -->
+  <div class="section">
+    <div class="section-title">Clientes — Logos</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">
+      PNG transparente recomendado. Tamanho ideal: <strong style="color:var(--accent)">200x80px</strong> (horizontal) ou <strong style="color:var(--accent)">160x160px</strong> (quadrado).<br>
+      As logos aparecem em cinza escuro e ficam nitidas ao passar o mouse.
+    </p>
+    <div class="clients-upload-grid">
+      <div class="field"><label>Cliente 1 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,1)">
+        <div class="img-upload-label" id="cl1-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl1-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 2 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,2)">
+        <div class="img-upload-label" id="cl2-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl2-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 3 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,3)">
+        <div class="img-upload-label" id="cl3-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl3-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 4 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,4)">
+        <div class="img-upload-label" id="cl4-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl4-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 5 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,5)">
+        <div class="img-upload-label" id="cl5-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl5-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 6 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,6)">
+        <div class="img-upload-label" id="cl6-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl6-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 7 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,7)">
+        <div class="img-upload-label" id="cl7-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl7-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 8 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,8)">
+        <div class="img-upload-label" id="cl8-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl8-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 9 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,9)">
+        <div class="img-upload-label" id="cl9-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl9-preview"></div>
+      </div>
+      <div class="field"><label>Cliente 10 — Logo</label>
+        <div class="img-upload"><input type="file" accept="image/png,image/svg+xml,image/webp,image/jpeg" onchange="handleClientLogo(event,10)">
+        <div class="img-upload-label" id="cl10-label">Arraste ou <strong>clique</strong><br><span style="font-size:11px">PNG • 200x80px</span></div>
+        <img class="img-preview" id="cl10-preview"></div>
       </div>
     </div>
   </div>
@@ -237,43 +273,47 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
     <div class="section-title">Sobre o Studio</div>
     <div class="grid">
       <div>
-        <div class="field"><label>Título</label><textarea id="aboutTitle">Design com propósito. Execução sem concessões.</textarea></div>
-        <div class="field"><label>Descrição</label><textarea id="aboutDesc">Somos um studio criativo independente especializado em construir marcas com personalidade. Acreditamos que bom design vai além do visual — é uma ferramenta estratégica que gera valor real.</textarea></div>
-        <div class="field"><label>Localização</label><input id="aboutLocation" value="📍 Localizado em Maringá, PR. Atendemos clientes em todo o Brasil e projetos internacionais sob consulta."></div>
+        <div class="field"><label>Titulo</label><textarea id="aboutTitle">Design com proposito. Execucao sem concessoes.</textarea></div>
+        <div class="field"><label>Descricao</label><textarea id="aboutDesc">Somos um studio criativo independente especializado em construir marcas com personalidade. Acreditamos que bom design vai alem do visual &mdash; e uma ferramenta estrategica que gera valor real.</textarea></div>
+        <div class="field"><label>Localizacao</label><input id="aboutLocation" value="Localizado em Maringa, PR. Atendemos clientes em todo o Brasil e projetos internacionais sob consulta."></div>
       </div>
       <div>
-        <div class="stats-row">
-          <div class="field"><label>Stat 1 — Número</label><input id="stat1Num" value="47+"></div>
+        <div class="grid">
+          <div class="field"><label>Stat 1 — Numero</label><input id="stat1Num" value="47+"></div>
           <div class="field"><label>Stat 1 — Label</label><input id="stat1Label" value="Projetos Entregues"></div>
-          <div class="field"><label>Stat 2 — Número</label><input id="stat2Num" value="5+"></div>
+          <div class="field"><label>Stat 2 — Numero</label><input id="stat2Num" value="5+"></div>
           <div class="field"><label>Stat 2 — Label</label><input id="stat2Label" value="Anos de Studio"></div>
-          <div class="field"><label>Stat 3 — Número</label><input id="stat3Num" value="32"></div>
+          <div class="field"><label>Stat 3 — Numero</label><input id="stat3Num" value="32"></div>
           <div class="field"><label>Stat 3 — Label</label><input id="stat3Label" value="Clientes Ativos"></div>
-          <div class="field"><label>Stat 4 — Número</label><input id="stat4Num" value="3"></div>
-          <div class="field"><label>Stat 4 — Label</label><input id="stat4Label" value="Países Atendidos"></div>
+          <div class="field"><label>Stat 4 — Numero</label><input id="stat4Num" value="3"></div>
+          <div class="field"><label>Stat 4 — Label</label><input id="stat4Label" value="Paises Atendidos"></div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- CTA FINAL -->
+  <!-- CTA -->
   <div class="section">
-    <div class="section-title">CTA Final</div>
+    <div class="section-title">CTA Final &amp; Contato</div>
     <div class="grid">
       <div>
         <div class="field"><label>Linha 1</label><input id="ctaLine1" value="Pronto para criar"></div>
         <div class="field"><label>Linha 2 (cinza)</label><input id="ctaLine2" value="algo diferente?"></div>
+        <div class="field"><label>Descricao</label><input id="ctaDesc" value="Vamos conversar sobre o seu proximo projeto."></div>
       </div>
       <div>
-        <div class="field"><label>Descrição</label><input id="ctaDesc" value="Vamos conversar sobre o seu próximo projeto."></div>
-        <div class="field"><label>Botão</label><input id="ctaBtn" value="INICIAR UM PROJETO →"></div>
+        <div class="field"><label>Texto do Botao</label><input id="ctaBtn" value="INICIAR UM PROJETO →"></div>
+        <div class="field"><label>Link do Botao</label>
+          <input id="ctaLink" value="mailto:contato@zerostudio.com.br">
+          <small>WhatsApp: https://wa.me/5544999999999 &nbsp;|&nbsp; Email: mailto:seu@email.com &nbsp;|&nbsp; Pagina: https://seusite.com/contato</small>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- RODAPÉ -->
+  <!-- RODAPE -->
   <div class="section">
-    <div class="section-title">Rodapé & Links</div>
+    <div class="section-title">Rodape &amp; Redes Sociais</div>
     <div class="grid">
       <div>
         <div class="field"><label>Texto copyright</label><input id="footerCopy" value="© 2026 Zero.Studio. Todos os direitos reservados."></div>
@@ -287,247 +327,257 @@ header{background:#000;border-bottom:2px solid var(--accent);padding:16px 40px;d
   </div>
 
 </div><!-- /container -->
+</div><!-- /main-content -->
 
 <script>
-// Token stored only in browser localStorage — never in code
-let GITHUB_TOKEN = localStorage.getItem('zs_token') || '';
+var GITHUB_TOKEN = localStorage.getItem('zs_token') || '';
+var GITHUB_USER = 'felipeaurosi-ship-it';
+var GITHUB_REPO = 'zero-studio';
+var GITHUB_FILE = 'index.html';
+var GITHUB_API = 'https://api.github.com/repos/'+GITHUB_USER+'/'+GITHUB_REPO+'/contents/'+GITHUB_FILE;
 
-// Show token setup if not configured
-function checkToken() {
-  if (!GITHUB_TOKEN) {
-    document.getElementById('token-setup').style.display = 'flex';
-    document.getElementById('main-content').style.display = 'none';
+var logoBase64 = null;
+var clientLogos = {};
+var currentSHA = null;
+
+function checkToken(){
+  if(!GITHUB_TOKEN){
+    document.getElementById('token-setup').style.display='flex';
+    document.getElementById('main-content').style.display='none';
   } else {
-    document.getElementById('token-setup').style.display = 'none';
-    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('token-setup').style.display='none';
+    document.getElementById('main-content').style.display='block';
+    setStatus('ok','Pronto para publicar');
   }
 }
-
-function saveToken() {
-  const val = document.getElementById('token-input').value.trim();
-  if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
-    document.getElementById('token-error').textContent = 'Token inválido. Deve começar com ghp_';
+function saveToken(){
+  var val=document.getElementById('token-input').value.trim();
+  if(!val.startsWith('ghp_')&&!val.startsWith('github_pat_')){
+    document.getElementById('token-error').textContent='Token invalido. Deve comecar com ghp_';
     return;
   }
-  localStorage.setItem('zs_token', val);
-  GITHUB_TOKEN = val;
-  document.getElementById('token-error').textContent = '';
+  localStorage.setItem('zs_token',val);
+  GITHUB_TOKEN=val;
   checkToken();
+  log('Token salvo com sucesso!','ok');
 }
-
-function clearToken() {
+function clearToken(){
   localStorage.removeItem('zs_token');
-  GITHUB_TOKEN = '';
+  GITHUB_TOKEN='';
   checkToken();
 }
-const GITHUB_USER  = 'felipeaurosi-ship-it';
-const GITHUB_REPO  = 'zero-studio';
-const GITHUB_FILE  = 'index.html';
-const GITHUB_API   = `https://api.github.com/repos/${GITHUB_USER}/${GITHUB_REPO}/contents/${GITHUB_FILE}`;
 
-let logoBase64 = null;
-let currentSHA = null;
-
-function log(msg, type='info') {
-  const el = document.getElementById('log');
-  const line = document.createElement('div');
-  line.className = type;
-  line.textContent = new Date().toLocaleTimeString() + ' — ' + msg;
+function log(msg,type){
+  var el=document.getElementById('log');
+  var line=document.createElement('div');
+  line.className=type||'info';
+  line.textContent=new Date().toLocaleTimeString()+' — '+msg;
   el.appendChild(line);
-  el.scrollTop = el.scrollHeight;
+  el.scrollTop=el.scrollHeight;
+}
+function setStatus(state,text){
+  document.getElementById('status-dot').className='status-dot '+state;
+  document.getElementById('status-text').textContent=text;
 }
 
-function setStatus(state, text) {
-  const dot = document.getElementById('status-dot');
-  dot.className = 'status-dot ' + state;
-  document.getElementById('status-text').textContent = text;
-}
-
-function handleLogoUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = ev => {
-    logoBase64 = ev.target.result; // full data URI
-    const preview = document.getElementById('logo-preview');
-    preview.src = logoBase64;
-    preview.style.display = 'block';
-    log('Logo carregada: ' + file.name, 'ok');
+function handleLogoUpload(e){
+  var file=e.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    logoBase64=ev.target.result;
+    var p=document.getElementById('logo-preview');
+    p.src=ev.target.result;
+    p.style.display='block';
+    log('Logo carregada: '+file.name,'ok');
   };
   reader.readAsDataURL(file);
+  e.target.value='';
 }
 
-function getValues() {
-  const g = id => document.getElementById(id)?.value || '';
-  return {
-    studioName: g('studioName'),
-    accentColor: g('accentColor'),
-    heroTag: g('heroTag'),
-    heroLine1: g('heroLine1'),
-    heroLine2: g('heroLine2'),
-    heroLine3: g('heroLine3'),
-    heroDesc: g('heroDesc'),
-    heroCta: g('heroCta'),
-    s1Name: g('s1Name'), s1Desc: g('s1Desc'),
-    s2Name: g('s2Name'), s2Desc: g('s2Desc'),
-    s3Name: g('s3Name'), s3Desc: g('s3Desc'),
-    aboutTitle: g('aboutTitle'),
-    aboutDesc: g('aboutDesc'),
-    aboutLocation: g('aboutLocation'),
-    stat1Num: g('stat1Num'), stat1Label: g('stat1Label'),
-    stat2Num: g('stat2Num'), stat2Label: g('stat2Label'),
-    stat3Num: g('stat3Num'), stat3Label: g('stat3Label'),
-    stat4Num: g('stat4Num'), stat4Label: g('stat4Label'),
-    ctaLine1: g('ctaLine1'), ctaLine2: g('ctaLine2'),
-    ctaDesc: g('ctaDesc'), ctaBtn: g('ctaBtn'),
-    footerCopy: g('footerCopy'),
-    linkInstagram: g('linkInstagram'),
-    linkBehance: g('linkBehance'),
-    linkLinkedIn: g('linkLinkedIn'),
+function handleClientLogo(e,idx){
+  var file=e.target.files[0];
+  if(!file)return;
+  var reader=new FileReader();
+  reader.onload=function(ev){
+    clientLogos[idx]=ev.target.result;
+    var p=document.getElementById('cl'+idx+'-preview');
+    var l=document.getElementById('cl'+idx+'-label');
+    p.src=ev.target.result;
+    p.style.display='block';
+    if(l)l.style.display='none';
+    log('Logo cliente '+idx+' carregada','ok');
   };
+  reader.readAsDataURL(file);
+  e.target.value='';
 }
 
-async function fetchCurrentFile() {
-  const res = await fetch(GITHUB_API, {
-    headers: { Authorization: 'token ' + GITHUB_TOKEN, Accept: 'application/vnd.github.v3+json' }
-  });
-  if (!res.ok) throw new Error('Erro ao buscar arquivo: ' + res.status);
-  const data = await res.json();
-  currentSHA = data.sha;
-  return atob(data.content.replace(/\n/g, ''));
-}
+function g(id){return document.getElementById(id)?document.getElementById(id).value:'';}
 
-function applyValues(html, vals) {
-  const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-
-  // Helper to replace data-editable content
-  const replaceEditable = (html, key, val) => {
-    const re = new RegExp(`(data-editable="${key}">)[^<]*`, 'g');
-    return html.replace(re, `$1${esc(val)}`);
-  };
-
-  // Apply all text fields
-  const fields = [
-    ['nav-logo-name', vals.studioName.split('.')[0]],
-    ['nav-logo-suffix', vals.studioName.split('.')[1] || 'STUDIO'],
-    ['hero-tag', vals.heroTag],
-    ['hero-title-line1', vals.heroLine1],
-    ['hero-title-line2', vals.heroLine2],
-    ['hero-title-line3', vals.heroLine3],
-    ['hero-desc', vals.heroDesc],
-    ['hero-cta', vals.heroCta],
-    ['s1-name', vals.s1Name], ['s1-desc', vals.s1Desc],
-    ['s2-name', vals.s2Name], ['s2-desc', vals.s2Desc],
-    ['s3-name', vals.s3Name], ['s3-desc', vals.s3Desc],
-    ['about-title', vals.aboutTitle],
-    ['about-desc', vals.aboutDesc],
-    ['about-location', vals.aboutLocation],
-    ['stat1-num', vals.stat1Num], ['stat1-label', vals.stat1Label],
-    ['stat2-num', vals.stat2Num], ['stat2-label', vals.stat2Label],
-    ['stat3-num', vals.stat3Num], ['stat3-label', vals.stat3Label],
-    ['stat4-num', vals.stat4Num], ['stat4-label', vals.stat4Label],
-    ['cta-line1', vals.ctaLine1], ['cta-line2', vals.ctaLine2],
-    ['cta-desc', vals.ctaDesc], ['cta-btn', vals.ctaBtn],
-    ['footer-copy', vals.footerCopy],
-  ];
-
-  fields.forEach(([key, val]) => { html = replaceEditable(html, key, val); });
+function applyValues(html){
+  var acc=g('accentColor')||'#c8f000';
 
   // Accent color
-  html = html.replace(/--accent:\s*#[a-fA-F0-9]{3,6}/g, `--accent: ${vals.accentColor}`);
-  html = html.replace(/--accent2:\s*#[a-fA-F0-9]{3,6}/g, `--accent2: ${vals.accentColor}`);
-
-  // Footer links
-  if (vals.linkInstagram) html = html.replace(/data-editable="footer-l1">[^<]*/g, `data-editable="footer-l1">Instagram`);
-  if (vals.linkBehance)   html = html.replace(/data-editable="footer-l2">[^<]*/g, `data-editable="footer-l2">Behance`);
-  if (vals.linkLinkedIn)  html = html.replace(/data-editable="footer-l3">[^<]*/g, `data-editable="footer-l3">LinkedIn`);
+  html=html.replace(/--accent:#[a-fA-F0-9]{3,6}/g,'--accent:'+acc);
+  html=html.replace(/--accent2:#[a-fA-F0-9]{3,6}/g,'--accent2:'+acc);
 
   // Logo
-  if (logoBase64) {
-    // Replace the img src and make it visible, hide the text
-    html = html.replace(
-      /(<img id="logo-img" src=")[^"]*(" alt="Logo"[^>]*>)/,
-      `<img id="logo-img" src="${logoBase64}" alt="Logo" style="display:block;height:36px;width:auto;max-width:180px;">`
+  if(logoBase64){
+    var h=g('logoHeight')||'36';
+    html=html.replace(
+      /<img class="nav-logo-img" id="logo-img" src="[^"]*" alt="Logo">/,
+      '<img class="nav-logo-img active" id="logo-img" src="'+logoBase64+'" alt="Logo" style="height:'+h+'px;">'
     );
     // Hide text logo
-    html = html.replace(
-      /(<span class="logo-text"[^>]*>.*?<\/span>)/s,
-      `<span class="logo-text" id="logo-text" style="display:none">ZERO<span style="color:var(--accent)">.</span>STUDIO</span>`
+    html=html.replace(
+      /<span class="nav-logo-text">[\s\S]*?<\/span>/,
+      '<span class="nav-logo-text" style="display:none"></span>'
     );
+  }
+
+  // Hero tag
+  var tag=g('heroTag');
+  if(tag) html=html.replace(/(<p class="hero-tag">)[^<]*/,'$1'+tag);
+
+  // Hero title
+  var l1=g('heroLine1'),l2=g('heroLine2'),l3=g('heroLine3');
+  if(l1||l2||l3){
+    html=html.replace(
+      /(<h1 class="hero-title">[\s\S]*?<\/h1>)/,
+      '<h1 class="hero-title">'+
+        (l1||'Criamos')+'<br>\n    <span class="muted">'+(l2||'identidades')+'</span><br>\n    '+(l3||'que ficam.')+
+      '\n  </h1>'
+    );
+  }
+
+  // Hero desc
+  var desc=g('heroDesc');
+  if(desc) html=html.replace(/(<p class="hero-desc">)[^<]*/,'$1'+desc);
+
+  // Hero CTA text
+  var cta=g('heroCta');
+  if(cta) html=html.replace(/(<a class="btn-primary" href="#trabalhos">)[^<]*/,'$1'+cta);
+
+  // Services
+  var sn=['s1Name','s2Name','s3Name'],sd=['s1Desc','s2Desc','s3Desc'];
+  var snames=document.querySelectorAll('.service-name');
+  // Replace via regex in html
+  var snVals=[g('s1Name'),g('s2Name'),g('s3Name')];
+  var sdVals=[g('s1Desc'),g('s2Desc'),g('s3Desc')];
+  html=html.replace(/(<h3 class="service-name">)([^<]*)/g,function(m,tag,old,offset){
+    // find which one
+    for(var i=0;i<3;i++){
+      if(snVals[i]) {var t=snVals[i];snVals[i]=null;return tag+t;}
+    }
+    return m;
+  });
+  html=html.replace(/(<p class="service-desc">)([^<]*)/g,function(m,tag,old){
+    for(var i=0;i<3;i++){
+      if(sdVals[i]) {var t=sdVals[i];sdVals[i]=null;return tag+t;}
+    }
+    return m;
+  });
+
+  // About
+  var at=g('aboutTitle'),ad=g('aboutDesc'),al=g('aboutLocation');
+  if(at) html=html.replace(/(<h2 class="about-title">)[^<]*/,'$1'+at);
+  if(ad) html=html.replace(/(<p class="about-desc">)[^<]*/,'$1'+ad);
+  if(al) html=html.replace(/([📍&#128205;]+\s*)([^<]*)/,'$1'+al);
+
+  // Stats
+  var stats=[
+    [g('stat1Num'),g('stat1Label')],
+    [g('stat2Num'),g('stat2Label')],
+    [g('stat3Num'),g('stat3Label')],
+    [g('stat4Num'),g('stat4Label')]
+  ];
+  var snumVals=stats.map(function(s){return s[0];});
+  var slabVals=stats.map(function(s){return s[1];});
+  html=html.replace(/(<div class="stat-num">)([^<]*)/g,function(m,tag,old){
+    for(var i=0;i<4;i++){if(snumVals[i]){var t=snumVals[i];snumVals[i]=null;return tag+t;}}
+    return m;
+  });
+  html=html.replace(/(<div class="stat-label">)([^<]*)/g,function(m,tag,old){
+    for(var i=0;i<4;i++){if(slabVals[i]){var t=slabVals[i];slabVals[i]=null;return tag+t;}}
+    return m;
+  });
+
+  // CTA section
+  var cl1=g('ctaLine1'),cl2=g('ctaLine2'),cd=g('ctaDesc'),cb=g('ctaBtn'),cl=g('ctaLink');
+  if(cl1) html=html.replace(/(<h2 class="cta-title">)[^<]*/,'$1'+cl1+'<br>');
+  if(cl2) html=html.replace(/(<span class="muted">)[^<]*/,'$1'+cl2);
+  if(cd) html=html.replace(/(<p class="cta-desc">)[^<]*/,'$1'+cd);
+  if(cb) html=html.replace(/(<a class="btn-cta" id="cta-btn-link"[^>]*>)[^<]*/,'$1'+cb);
+  if(cl) html=html.replace(/(id="cta-btn-link" href=")[^"]*(")/,'$1'+cl+'$2');
+
+  // Footer
+  var fc=g('footerCopy');
+  if(fc) html=html.replace(/(<span>)[^<]*(&#169;|©)[^<]*(<\/span>)/,'$1'+fc+'$3');
+
+  var li=g('linkInstagram'),lb=g('linkBehance'),ll=g('linkLinkedIn');
+  if(li) html=html.replace(/(id="link-instagram" href=")[^"]*(")/,'$1'+li+'$2');
+  if(lb) html=html.replace(/(id="link-behance" href=")[^"]*(")/,'$1'+lb+'$2');
+  if(ll) html=html.replace(/(id="link-linkedin" href=")[^"]*(")/,'$1'+ll+'$2');
+
+  // Client logos
+  for(var i=1;i<=10;i++){
+    if(clientLogos[i]){
+      html=html.replace(
+        '<div class="client-logo"><span class="client-logo-ph">Cliente '+i+'</span></div>',
+        '<div class="client-logo"><img src="'+clientLogos[i]+'" alt="Cliente '+i+'"></div>'
+      );
+    }
   }
 
   return html;
 }
 
-async function publishSite() {
-  const btn = document.getElementById('btn-publish');
-  btn.disabled = true;
-  btn.textContent = '⏳ Publicando...';
-  setStatus('loading', 'Conectando ao GitHub...');
-  log('Iniciando publicação...', 'info');
+async function fetchCurrentFile(){
+  var res=await fetch(GITHUB_API,{headers:{Authorization:'token '+GITHUB_TOKEN,Accept:'application/vnd.github.v3+json'}});
+  if(!res.ok)throw new Error('Erro ao buscar arquivo: '+res.status);
+  var data=await res.json();
+  currentSHA=data.sha;
+  return decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+}
 
-  try {
-    // 1. Fetch current file + SHA
-    log('Buscando versão atual do GitHub...', 'info');
-    let html = await fetchCurrentFile();
-    log('Arquivo obtido com sucesso ✓', 'ok');
-
-    // 2. Apply values
-    const vals = getValues();
-    html = applyValues(html, vals);
-    log('Alterações aplicadas ✓', 'ok');
-
-    // 3. Push to GitHub
-    setStatus('loading', 'Enviando para GitHub...');
-    log('Enviando para GitHub...', 'info');
-
-    const encoded = btoa(unescape(encodeURIComponent(html)));
-
-    const res = await fetch(GITHUB_API, {
-      method: 'PUT',
-      headers: {
-        Authorization: 'token ' + GITHUB_TOKEN,
-        Accept: 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        message: 'Admin: atualização via painel ' + new Date().toLocaleString('pt-BR'),
-        content: encoded,
-        sha: currentSHA,
-      }),
+async function publishSite(){
+  var btn=document.getElementById('btn-publish');
+  btn.disabled=true;btn.textContent='⏳ Publicando...';
+  setStatus('loading','Conectando ao GitHub...');
+  log('Iniciando publicacao...','info');
+  try{
+    log('Buscando versao atual...','info');
+    var html=await fetchCurrentFile();
+    log('Arquivo obtido ✓','ok');
+    html=applyValues(html);
+    log('Alteracoes aplicadas ✓','ok');
+    setStatus('loading','Enviando para GitHub...');
+    log('Enviando para GitHub...','info');
+    var encoded=btoa(unescape(encodeURIComponent(html)));
+    var res=await fetch(GITHUB_API,{
+      method:'PUT',
+      headers:{Authorization:'token '+GITHUB_TOKEN,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify({message:'Admin: atualizacao '+new Date().toLocaleString('pt-BR'),content:encoded,sha:currentSHA})
     });
-
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.message || 'Erro no GitHub: ' + res.status);
-    }
-
-    log('Push para GitHub realizado ✓', 'ok');
-    log('Netlify detectou alteração — publicando automaticamente...', 'info');
-    setStatus('ok', 'Publicado com sucesso! Aguarde ~30s no ar.');
-    log('✅ Site publicado! Acesse seu domínio Netlify em ~30 segundos.', 'ok');
-
-  } catch (err) {
-    log('❌ Erro: ' + err.message, 'err');
-    setStatus('error', 'Erro na publicação');
-    console.error(err);
+    if(!res.ok){var err=await res.json();throw new Error(err.message||'Erro: '+res.status);}
+    log('Push realizado ✓','ok');
+    log('✅ Publicado! Site atualiza em ~30 segundos.','ok');
+    setStatus('ok','Publicado com sucesso!');
+  } catch(err){
+    log('❌ Erro: '+err.message,'err');
+    setStatus('error','Erro na publicacao');
   }
-
-  btn.disabled = false;
-  btn.textContent = '🚀 Publicar no site';
+  btn.disabled=false;btn.textContent='🚀 Publicar no site';
 }
 
-function previewSite() {
-  // Open current GitHub Pages or Netlify URL
-  window.open('https://github.com/felipeaurosi-ship-it/zero-studio', '_blank');
-}
+// Enter key no token
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&document.getElementById('token-setup').style.display==='flex') saveToken();
+});
 
-// Init
-setStatus('ok', 'Pronto para publicar');
-log('Painel admin iniciado. Edite os campos e clique em Publicar.', 'ok');
-  checkToken();
+checkToken();
+setStatus('ok','Pronto para publicar');
+log('Painel carregado. Edite os campos e clique em Publicar.','ok');
 </script>
-
-</div><!-- /main-content -->
 </body>
 </html>
