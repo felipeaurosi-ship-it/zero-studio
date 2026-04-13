@@ -444,9 +444,15 @@ function applyValues(html, vals) {
 
   // Logo
   if (logoBase64) {
+    // Replace the img src and make it visible, hide the text
     html = html.replace(
-      /<img class="logo-img-preview" id="logo-img" src="[^"]*"/,
-      `<img class="logo-img-preview" id="logo-img" src="${logoBase64}" style="display:block;height:36px;width:auto;max-width:180px;" class="logo-img-preview active"`
+      /(<img id="logo-img" src=")[^"]*(" alt="Logo"[^>]*>)/,
+      `<img id="logo-img" src="${logoBase64}" alt="Logo" style="display:block;height:36px;width:auto;max-width:180px;">`
+    );
+    // Hide text logo
+    html = html.replace(
+      /(<span class="logo-text"[^>]*>.*?<\/span>)/s,
+      `<span class="logo-text" id="logo-text" style="display:none">ZERO<span style="color:var(--accent)">.</span>STUDIO</span>`
     );
   }
 
